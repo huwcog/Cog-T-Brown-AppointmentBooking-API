@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+var xml;
+
 var createOffers = function (params){
-    var xml;
-    if (params){
-        //TODO - write code to provide custom response back for more realistic appointments
+    if (xml){
+
     } else {
         xml =  '<?xml version="1.0" encoding="UTF-8"?><AppointmentOffers xmlns="http://www.cognitomobile.com/schemas/TBrown/1.0/Appointments"><AppointmentOffer><Level>Morning</Level><AppointmentDate>2010-09-28</AppointmentDate><StartTime>09:00:00</StartTime> <EndTime>13:00:00</EndTime> </AppointmentOffer> <AppointmentOffer> <Level>Afternoon</Level> <AppointmentDate>2010-09-28</AppointmentDate> <StartTime>14:00:00</StartTime> <EndTime>17:00:00</EndTime> </AppointmentOffer> </AppointmentOffers>';
     }
@@ -25,6 +26,17 @@ router.get('/serviceorder/:ServiceOrderNo/appointments', function(req, res, next
     var result = createOffers(req.query);
     res.set('Content-Type', 'application/xml');
     res.send(result);
+});
+
+router.post('/config/RequestAppointments',function (req,res,next) {
+    xml = "";
+    req.on("data",function(chunk){
+        xml += chunk.toString();
+    });
+    req.on("end",function(){
+        res.set('Content-Type', 'application/xml');
+        res.send('<Response>Success</Response>');
+    });
 });
 
 module.exports = router;

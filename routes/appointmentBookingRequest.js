@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 var requestType = 1;
+var result;
 
 /* GET home page. */
 router.post('/serviceorder/:ServiceOrderNo/appointments', function(req, res, next) {
-    var result;
     console.log('');
     console.log('*******************');
     console.log('Call to POST Request - Appointment Request – T18A');
@@ -24,6 +24,8 @@ router.post('/serviceorder/:ServiceOrderNo/appointments', function(req, res, nex
         case 3:
             result = '<?xml version="1.0" encoding="UTF-8"?><AppointmentBookingResponse xmlns="http://www.cognitomobile.com/schemas/TBrown/1.0/Appointments"><Confirmed>false</Confirmed></AppointmentBookingResponse>';
             break;
+        case 4:
+            break;
     }
     res.set('Content-Type', 'application/xml');
     res.send(result);
@@ -32,8 +34,16 @@ router.post('/serviceorder/:ServiceOrderNo/appointments', function(req, res, nex
 router.post('/config/BookingRequest',function (req,res,next) {
     console.log('Setting appooint booking response type to: '+req.query.setBookingType);
     requestType = parseInt(req.query.setBookingType);
-    res.set('Content-Type', 'application/xml');
-    res.send('<Response>Success</Response>');
+    if (requestType === 4) {
+        result = "";
+        req.on("data",function(chunk){
+            result += chunk.toString();
+        });
+    }
+    req.on("end",function(){
+        res.set('Content-Type', 'application/xml');
+        res.send('<Response>Success</Response>');
+    });
 });
 
 module.exports = router;
