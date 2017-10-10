@@ -35,15 +35,18 @@ router.post('/config/BookingRequest',function (req,res,next) {
     console.log('Setting appooint booking response type to: '+req.query.setBookingType);
     requestType = parseInt(req.query.setBookingType);
     if (requestType === 4) {
-        result = "";
-        req.on("data",function(chunk){
-            result += chunk.toString();
-        });
-    }
-    req.on("end",function(){
-        res.set('Content-Type', 'application/xml');
-        res.send('<Response>Success</Response>');
-    });
+		result = "";
+		req.on("data",function(chunk){
+			result += chunk.toString();
+		});
+		req.on("end",function(){
+			res.set('Content-Type', 'application/xml');
+			res.send('<Response>Success</Response>');
+		});
+	} else {
+		res.set('Content-Type', 'application/xml');
+		res.send('<Response>Success</Response>');
+	}
 });
 
 module.exports = router;
