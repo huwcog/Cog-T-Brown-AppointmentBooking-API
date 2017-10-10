@@ -2,11 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 var xml;
+var requestType = 1;
 
 var createOffers = function (params){
     if (xml){
-
-    } else {
+        
+	} else {
         xml =  '<?xml version="1.0" encoding="UTF-8"?><AppointmentOffers xmlns="http://www.cognitomobile.com/schemas/TBrown/1.0/Appointments"><AppointmentOffer><Level>Morning</Level><AppointmentDate>2010-09-28</AppointmentDate><StartTime>09:00:00</StartTime> <EndTime>13:00:00</EndTime> </AppointmentOffer> <AppointmentOffer> <Level>Afternoon</Level> <AppointmentDate>2010-09-28</AppointmentDate> <StartTime>14:00:00</StartTime> <EndTime>17:00:00</EndTime> </AppointmentOffer> </AppointmentOffers>';
     }
     return xml;
@@ -23,19 +24,31 @@ router.get('/serviceorder/:ServiceOrderNo/appointments', function(req, res, next
     }
     console.log('Response to GET Request - Appointment Offers - T18');
 
-    var result = createOffers(req.query);
+	console.log('RequestType = '+requestType);
+	var result = '';
+    switch (requestType) {
+        case 1:
+			result = createOffers(req.query);
+            break;
+        case 2:
+			res.status(500);
+			break;
+    }
+	
     res.set('Content-Type', 'application/xml');
     res.send(result);
 });
 
 router.post('/config/RequestAppointments',function (req,res,next) {
-    xml = "";
+	xml = "";
+	console.log('Setting appointments response type to: '+req.query.setResponseType);
+	requestType = parseInt(req.query.setResponseType);
     req.on("data",function(chunk){
         xml += chunk.toString();
     });
-    req.on("end",function(){
+	req.on("end",function(){
         res.set('Content-Type', 'application/xml');
-        res.send('<Response>Success</Response>');
+		res.send('<Response>Success</Response>');
     });
 });
 
