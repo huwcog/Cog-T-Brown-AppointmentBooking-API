@@ -24,8 +24,12 @@ router.post('/serviceorder/:ServiceOrderNo/appointments', function(req, res, nex
         case 3:
             result = '<?xml version="1.0" encoding="UTF-8"?><AppointmentBookingResponse xmlns="http://www.cognitomobile.com/schemas/TBrown/1.0/Appointments"><Confirmed>false</Confirmed></AppointmentBookingResponse>';
             break;
-        case 4:
-            break;
+		case 4:
+			break;
+		case 5:
+			result = '';
+			res.status(500);
+			break;
     }
     res.set('Content-Type', 'application/xml');
     res.send(result);
@@ -34,7 +38,7 @@ router.post('/serviceorder/:ServiceOrderNo/appointments', function(req, res, nex
 router.post('/config/BookingRequest',function (req,res,next) {
     console.log('Setting appooint booking response type to: '+req.query.setBookingType);
     requestType = parseInt(req.query.setBookingType);
-    if (requestType === 4) {
+	if (requestType === 4) {
 		result = "";
 		req.on("data",function(chunk){
 			result += chunk.toString();
